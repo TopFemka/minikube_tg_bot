@@ -38,6 +38,16 @@
 - redis-deployment.yaml непосредственно сама БД Redis.
 - fastapi-deployment.yaml создаст эндпоинт для вебхука /webhook со всей логикой.
 - NetworkPolicy-fastapi.yaml даст доступ FastApi во внешнюю сеть.
+8. Ах да, вебхук...
+
+Установить
+- https://api.telegram.org/bot{bot_token}/setWebhook?url={url_to_send_updates_to}
+
+Проверить
+- https://api.telegram.org/bot{my_bot_token}/getWebhookInfo
+
+Удалить
+- https://api.telegram.org/bot{bot_token}/setWebhook?url=
 
 ## Использование
 
