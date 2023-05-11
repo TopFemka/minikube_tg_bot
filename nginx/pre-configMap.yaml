@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  mynginx.conf: |
+    # Определяем работу nginx на портах 80 и 443
+    server {
+    listen 80;
+    server_name nginx-service;
+    return 301 https://$server_name$request_uri;
+    }
+
+    server {
+        listen               443 ssl;
+        server_name          nginx-service;
+        ssl_certificate      /etc/nginx/certs/tls.pem;
+        ssl_certificate_key  /etc/nginx/certs/tls.key;
+
+        location /webhook {
+            proxy_pass            http://fastapi-service:8000;
+
+            proxy_set_header      Host $server_name;
+            proxy_set_header      X-Real-IP $remote_addr;
+            proxy_set_header      X-Forwarded-For $proxy_add_x_forwarded_for;
+
+            # Указываем, что проксируем HTTPS-соединение
+            proxy_set_header      X-Forwarded-Proto $scheme;
+            proxy_ssl_server_name on;
+            proxy_ssl_session_reuse on;
+
+            # Конфигурируем тайм-аут для проксирования
+            proxy_connect_timeout 30s;
+            proxy_read_timeout    30s;
+            proxy_send_timeout    30s;
+
+            # Настраиваем заголовки для Gunicorn (*femka но воркер будет uvicorn)
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }

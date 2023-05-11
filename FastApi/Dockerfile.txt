@@ -1,0 +1,19 @@
+# Используем базовый образ с ОС Ubuntu
+FROM ubuntu:latest
+
+# Устанавливаем необходимые пакеты - nginx, python3, pip3
+RUN apt-get update && apt-get install -y python3 python3-pip ffmpeg libsm6 libxext6
+WORKDIR /app
+
+# Устанавливаем зависимости для Python (можно перечислить необходимые в requirements.txt)
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# Копируем код приложения в Docker образ
+COPY /app /app/
+
+# Открывает порт 8000
+EXPOSE 8000
+
+# Запускаем uvicorn + fastapi 
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

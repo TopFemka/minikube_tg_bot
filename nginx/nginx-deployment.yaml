@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: nginx-volume
+          mountPath: /etc/nginx/certs
+        - name: nginx-config
+          mountPath: /etc/nginx/conf.d
+        command: ["/bin/bash"]
+        # команда запуска nginx
+        args: ["-c", "cat /etc/nginx/conf.d/mynginx.conf && nginx -g 'daemon off;'"] 
+      volumes:
+      - name: nginx-volume
+        secret:
+          secretName: my-tls-secret
+      - name: nginx-config
+        configMap:
+          name: nginx-config
+          items:
+          - key: mynginx.conf
+            path: mynginx.conf

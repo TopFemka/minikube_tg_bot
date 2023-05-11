@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-service
+spec:
+  selector:
+    app: fastapi
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi
+  template:
+    metadata:
+      labels:
+        app: fastapi
+    spec:
+      containers:
+      - name: fastapi
+        image: <НАЗВАНИЕ ВАШЕГО ОБРАЗА>
+        command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+        ports:
+        - containerPort: 8000
+        env:
+        - name: API_KEYS_FILE
+          value: /api-keys/api_keys.txt
+        - name: TG_TOKEN_FILE
+          value: /tg-token/tg_token.txt
+        - name: REDIS_HOST
+          value: redis-service
+        - name: REDIS_PORT
+          value: "6379"
+        volumeMounts:
+        - name: api-keys
+          mountPath: /api-keys
+          readOnly: true
+        - name: tg-token
+          mountPath: /tg-token
+          readOnly: true
+      volumes:
+      - name: api-keys
+        secret:
+          secretName: api-keys
+      - name: tg-token
+        secret:
+          secretName: tg-token
+
