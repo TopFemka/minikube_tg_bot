@@ -15,7 +15,6 @@ class TelegramBot:
         self.gpt = ApiChat(api_key, url, self.tg_api)
         self.command = SetCommand(self.chat_storage, self.tg_api)
         self.callbachnaya = AlloCallback(self.chat_storage, self.tg_api)
-        #self.client = aiohttp.ClientSession() возможно так более корректно?
         
 
     async def telegram_webhook(self, update: Dict[str, Any]):
@@ -35,7 +34,7 @@ class TelegramBot:
         
         if 'voice' in message and message['voice']:
             profile = self.chat_storage.get_profile(user_id)
-            audio_mode = profile["laungle_audio_mode"]                        
+            audio_mode = profile["language_audio_mode"]                        
             message_text = await describe_audio(message, audio_mode, self.telegram_api_token)
 
         elif 'text' in message and message['text']:
