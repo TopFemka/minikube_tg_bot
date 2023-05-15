@@ -41,7 +41,6 @@ class SetCommand:
                     await self.tg_api.send_message(chat_id, message_text=formatted_profile, reply_markup=reply_markup)
                 return {'ok': True}
             except Exception as e:
-                print(f"Ошибка получения профиля: {e}")
                 await self.tg_api.send_message(chat_id, f'Произошла ошибка при получении профиля.{e}')
                 return {'ok': True}
 
@@ -55,7 +54,28 @@ class SetCommand:
 
     async def handle_history(self, chat_id, user_id, chat_user):
         user_history = self.chat_storage.get_chat_history(chat_user)
-        await self.tg_api.send_message(chat_id, str(user_history))
+        history_string = 'Контекcт переписки: \n'
+        for message in user_history:
+            role = message['role']
+            content = message['content']
+            scontent = f"\n\n{role}: {content}" 
+            history_string += scontent
+                   
+        if len(history_string) > 3500:
+            MAX_MESSAGE_LENGTH = 3500
+            # Вычисляем количество частей
+            num_parts = (len(history_string) - 1) // MAX_MESSAGE_LENGTH + 1
+            for i in range(num_parts):
+                # Вычисляем начало и конец очередной части строки
+                start = i * MAX_MESSAGE_LENGTH
+                end = (i + 1) * MAX_MESSAGE_LENGTH
+                # Если это последняя часть, то берем оставшуюся часть строки
+                if i == num_parts - 1:
+                    end = len(history_string)
+                # Отправляем очередную часть строки в Telegram
+                await self.tg_api.send_message(chat_id, message_text=history_string[start:end])
+        else:
+            await self.tg_api.send_message(chat_id, str(user_history))
 
     async def handle_start(self, chat_id, user_id, chat_user):
         message_text = f'Привет! Я ChatGPT by @TopFemka.\n' \
