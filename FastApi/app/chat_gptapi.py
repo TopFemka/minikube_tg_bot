@@ -6,14 +6,13 @@ from typing import Dict, Any, List
 import math
 
 class ApiChat:
-    def __init__(self, api_key, url, bot):
+    def __init__(self, api_key, url, tg_api):
         self.api_key = api_key
         self.api_base = url
         self.headers = {"Content-Type": "application/json",
                         "Authorization": f"Bearer {self.api_key[0]}"}
-        self.bot = bot
+        self.bot = tg_api
         self.current_key_index = 0
-        #self.client = aiohttp.ClientSession() возможно это более корректно
 
 
     # функция принимает контекст, и запускает процесс обработки в openai. Возвращает полный ответ, чтобы отправить его в БД
@@ -55,7 +54,7 @@ class ApiChat:
             if response_text.startswith('data:'):
                 response_text = response_text[6:].strip()
                 if response_text.startswith('[DONE]'): # Ловим окончание потока
-                    if len(content) <=2000:  
+                    if len(content) <=3500:  
                         await self.bot.edit_message(chat_id, message_id, message_text=content)
                     else:
                         middle = math.floor(len(content) / 2)
