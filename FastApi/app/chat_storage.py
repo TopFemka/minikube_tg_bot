@@ -72,4 +72,4 @@ class ChatStorage:
         # получение последних 5 сообщений чата
         chat_data = json.loads(self.redis.get(chat_user) or '{}')
         messages = chat_data.get('messages', [])
-        return messages[-5:]
+        return messages
