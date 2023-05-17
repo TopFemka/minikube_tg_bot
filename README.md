@@ -31,13 +31,13 @@
 -  `tg-token`  Один token для TG бота "tg_token".
 6. Примените ConfigMap, определяющий nginx на 80 и 443 порту. Использует секрет `my-tls-secret`, монтируя файлы в /etc/nginx/certs;
 7. Создайте необходимые объекты Kubernetes с помощью команды `kubectl apply -f <manifest_name>.yaml`;
-- nginx-service.yaml определяет ноду порт 443, на которой будет доступен сервис, а также селекторы, которые определяют, к каким подам будет направлен трафик.
-- nginx-deployment.yaml будет слушать 80\443 порты, ssl-прокладка, проксирующая на fastapi-service.
-- redis-service.yaml сюда будут направляться запросы к БД от приложения.
-- redis-pvc.yaml определяем 1гб под хранилище, чтобы при перезапуске minikube и факапах история\профили не пропадали.
-- redis-deployment.yaml непосредственно сама БД Redis.
-- fastapi-deployment.yaml создаст эндпоинт для вебхука /webhook со всей логикой.
-- NetworkPolicy-fastapi.yaml даст доступ FastApi во внешнюю сеть.
+- `nginx-service.yaml` определяет ноду порт 443, на которой будет доступен сервис, а также селекторы, которые определяют, к каким подам будет направлен трафик.
+- `nginx-deployment.yaml` будет слушать 80\443 порты, ssl-прокладка, проксирующая на fastapi-service.
+- `redis-service.yaml` сюда будут направляться запросы к БД от приложения.
+- `redis-pvc.yaml` определяем 1гб под хранилище, чтобы при перезапуске minikube и факапах история\профили не пропадали.
+- `redis-deployment.yaml` непосредственно сама БД Redis.
+- `fastapi-deployment.yaml` создаст эндпоинт для вебхука /webhook со всей логикой.
+- `NetworkPolicy-fastapi.yaml` даст доступ FastApi во внешнюю сеть.
 
 8. Ах да, вебхук
 
